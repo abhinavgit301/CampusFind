@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { User } from '../types/index.js';
-import { api } from '../lib/api.js';
+import { api, setAuthTokens, clearAuthTokens, getRefreshToken } from '../lib/api.js';
 
 interface AuthContextType {
   user: User | null;
@@ -39,6 +39,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       const data = await api.get('/auth/me');
       setUser(data.user);
     } catch (_err) {
+      clearAuthTokens();
       setUser(null);
     } finally {
       setLoading(false);
@@ -51,6 +52,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const login = async (email: string, password: string) => {
     const data = await api.post('/auth/login', { email, password });
+    if (data.token) {
+      setAuthTokens(data.token, data.refreshToken);
+    }
     setUser(data.user);
     setIsAuthModalOpen(false);
   };
@@ -64,16 +68,21 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     phoneNumber?: string;
   }) => {
     const data = await api.post('/auth/register', payload);
+    if (data.token) {
+      setAuthTokens(data.token, data.refreshToken);
+    }
     setUser(data.user);
     setIsAuthModalOpen(false);
   };
 
   const logout = async () => {
     try {
-      await api.post('/auth/logout');
+      const refreshToken = getRefreshToken();
+      await api.post('/auth/logout', { refreshToken });
     } catch (_e) {
       // Ignore network errors on logout
     }
+    clearAuthTokens();
     setUser(null);
   };
 

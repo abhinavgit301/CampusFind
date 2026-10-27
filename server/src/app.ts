@@ -18,9 +18,31 @@ const app = express();
 app.disable('x-powered-by');
 
 // Security and parser middlewares
+const allowedOrigins = [
+  'https://campus-find-dun.vercel.app',
+  ENV.APP_ORIGIN,
+  'http://localhost:5173',
+  'http://127.0.0.1:5173',
+  'http://localhost:4173',
+  'http://localhost:3000',
+].filter(Boolean);
+
 app.use(
   cors({
-    origin: [ENV.APP_ORIGIN, 'http://localhost:5173', 'http://127.0.0.1:5173'],
+    origin: (origin, callback) => {
+      // Allow requests with no origin (like mobile apps, curl, or server-to-server)
+      if (!origin) return callback(null, true);
+      if (
+        allowedOrigins.includes(origin) ||
+        origin.endsWith('.vercel.app') ||
+        origin.endsWith('.onrender.com') ||
+        /^http:\/\/localhost:\d+$/.test(origin) ||
+        /^http:\/\/127\.0\.0\.1:\d+$/.test(origin)
+      ) {
+        return callback(null, true);
+      }
+      return callback(null, true);
+    },
     credentials: true,
   })
 );

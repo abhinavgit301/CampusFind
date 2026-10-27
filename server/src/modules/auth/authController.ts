@@ -54,6 +54,8 @@ export async function register(req: Request, res: Response): Promise<void> {
 
     res.status(201).json({
       message: 'Registration successful',
+      token: sessionData.accessToken,
+      refreshToken: sessionData.refreshToken,
       user: {
         id: user._id,
         email: user.email,
@@ -119,6 +121,8 @@ export async function login(req: Request, res: Response): Promise<void> {
 
     res.json({
       message: 'Login successful',
+      token: sessionData.accessToken,
+      refreshToken: sessionData.refreshToken,
       user: {
         id: user._id,
         email: user.email,
@@ -153,6 +157,8 @@ export async function refresh(req: Request, res: Response): Promise<void> {
 
     res.json({
       message: 'Session refreshed',
+      token: rotated.accessToken,
+      refreshToken: rotated.refreshToken,
       user: {
         id: rotated.user._id,
         email: rotated.user.email,

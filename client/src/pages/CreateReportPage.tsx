@@ -27,7 +27,7 @@ export const CreateReportPage: React.FC<CreateReportPageProps> = ({
   onBack,
   onSuccess,
 }) => {
-  const { user, updateProfile } = useAuth();
+  const { user, updateProfile, openAuthModal } = useAuth();
   const [reportType, setReportType] = useState<'LOST' | 'FOUND'>(initialType);
 
   // Common Fields
@@ -132,6 +132,12 @@ export const CreateReportPage: React.FC<CreateReportPageProps> = ({
     if (isSubmitted || loading) return; // Prevent duplicate submission
 
     setError(null);
+
+    if (!user) {
+      setError('You must be signed in to submit a report.');
+      openAuthModal('login');
+      return;
+    }
 
     // Validation
     if (!title.trim()) {

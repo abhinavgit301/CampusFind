@@ -18,14 +18,17 @@ declare global {
 }
 
 export function extractToken(req: Request): string | null {
-  // Check cookies first
+  // Check Authorization header first (explicit)
+  const authHeader = req.headers.authorization;
+  if (authHeader) {
+    const parts = authHeader.split(' ');
+    if (parts.length === 2 && /^bearer$/i.test(parts[0])) {
+      return parts[1].trim();
+    }
+  }
+  // Check cookies as fallback
   if (req.cookies && req.cookies.access_token) {
     return req.cookies.access_token;
-  }
-  // Check Authorization header
-  const authHeader = req.headers.authorization;
-  if (authHeader && authHeader.startsWith('Bearer ')) {
-    return authHeader.substring(7).trim();
   }
   return null;
 }
