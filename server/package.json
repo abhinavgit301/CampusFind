@@ -4,7 +4,7 @@
   "description": "Backend API for CampusFind Lost and Found Platform",
   "main": "dist/server.js",
   "scripts": {
-    "build": "node ./node_modules/typescript/bin/tsc",
+    "build": "tsc",
     "start": "node dist/server.js",
     "dev": "node ./node_modules/tsx/dist/cli.mjs watch src/server.ts",
     "seed": "node ./node_modules/tsx/dist/cli.mjs src/seeds/seedData.ts"
