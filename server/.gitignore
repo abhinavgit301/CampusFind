@@ -1,0 +1,22 @@
+# Dependencies
+node_modules/
+
+# Secrets and environment configs (NEVER COMMIT)
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.cert
+credentials.json
+
+# Local uploads
+uploads/
+
+# Build output
+dist/
+*.tsbuildinfo
+
+# Logs
+*.log
+logs/
